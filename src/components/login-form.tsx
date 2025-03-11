@@ -14,6 +14,8 @@ import { Loader2 } from "lucide-react";
 import { useState } from "react";
 import * as yup from "yup";
 import Error from "./Error";
+import { useFetch } from "@/hooks/useFetch";
+import login from "@/db/apiAuth";
 
 export function LoginForm({
   className,
@@ -42,14 +44,13 @@ export function LoginForm({
 
   //* Validation errors state
   const [errors, setErrors] = useState<Record<string, string>>({});
-  //* Loading state
-  const [loading, setLoading] = useState(false);
+
+  const {data, error, loading, fn: fnLoading} = useFetch(login)
 
   //* handle login functionality -->
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrors({});
-    setLoading(true);
     try {
       const formSchema = yup.object().shape({
         email: yup
@@ -63,6 +64,7 @@ export function LoginForm({
       });
 
       await formSchema.validate(formData, { abortEarly: false });
+      await fnLoading(formData)
     } catch (error) {
       const newErrors: Record<string, string> = {};
       if (error instanceof yup.ValidationError) {
@@ -71,9 +73,9 @@ export function LoginForm({
         });
       }
       setErrors(newErrors);
-      setLoading(false);
     }
   };
+
 
   return (
     <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10">

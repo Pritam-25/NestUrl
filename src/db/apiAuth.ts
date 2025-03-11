@@ -8,6 +8,6 @@ async function login(email: string, password: string) {
     if (error) throw new Error(error.message)
 
     return data;
-} {
+} 
 
-}
+export default login
