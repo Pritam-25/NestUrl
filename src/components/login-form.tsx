@@ -54,7 +54,7 @@ export function LoginForm({
     console.log(data);
     if (!error && data) {
       navigate(longLink ? `/dashboard?createNew=${longLink}` : "/dashboard");
-      fetchUser();  //refresh the page
+      fetchUser(); //refresh the page
     }
   }, [data, error]);
 
@@ -91,7 +91,12 @@ export function LoginForm({
   };
 
   return (
-    <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10">
+    <div className="flex gap-10 flex-col w-full items-center justify-center p-6 md:p-10">
+      {longLink && (
+        <h2 className="text-2xl font-bold text-red-500 mb-4">
+          Hold up! Please Log In first.
+        </h2>
+      )}
       <div className="w-full max-w-sm">
         <div className={cn("flex flex-col gap-6", className)} {...props}>
           <Card>

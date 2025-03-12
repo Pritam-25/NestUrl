@@ -18,8 +18,6 @@ function App() {
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
         <Routes>
           {/* Public Routes */}
-
-          {/* Protected Routes inside Layout */}
           <Route path="/" element={<Layout />}>
             <Route index element={<LandingPage />} />
             <Route
@@ -38,12 +36,13 @@ function App() {
                 </Require_Auth>
               }
             />
+          </Route>
 
-            <Route path="/auth" element={<Auth />}>
-              <Route index element={<LoginForm />} />
-              <Route path="login" element={<LoginForm />} />
-              <Route path="signup" element={<SignupForm />} />
-            </Route>
+          {/* Authentication Routes */}
+          <Route path="/auth" element={<Auth />}>
+            <Route index element={<LoginForm />} />
+            <Route path="login" element={<LoginForm />} />
+            <Route path="signup" element={<SignupForm />} />
           </Route>
 
           {/* 404 Not Found */}

@@ -23,7 +23,7 @@ const LandingPage = () => {
     if (longUrl) navigate(`/auth?createNew=${longUrl}`);
   };
   return (
-    <div className="flex flex-col items-center h-screen">
+    <div className="flex flex-col gap-10 items-center h-screen">
       <h2 className="my-10 sm:my-16 text-3xl sm:text-5xl lg:text-6xl text-center text-black dark:text-white font-extrabold">
         {" "}
         The only URL Shortner
