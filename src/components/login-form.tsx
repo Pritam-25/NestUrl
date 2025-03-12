@@ -16,7 +16,7 @@ import * as yup from "yup";
 import Error from "./Error";
 import { useFetch } from "@/hooks/useFetch";
 import { login, LoginData } from "@/db/apiAuth";
-import { useNavigate, useSearchParams } from "react-router";
+import { NavLink, useNavigate, useSearchParams } from "react-router";
 import { useUrlState } from "@/context";
 
 export function LoginForm({
@@ -46,19 +46,15 @@ export function LoginForm({
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const { data, error, loading, fn: loginUser } = useFetch(login);
-  const fetchUser = useUrlState();
+  const { fetchUser } = useUrlState();
 
   //* after login navigate back to dashboard
   // if longlink present then createnew=longlink either simpy ""
   useEffect(() => {
     console.log(data);
     if (!error && data) {
-      navigate(`/dashboard?${longLink}` ? `createNew=${longLink}` : "");
-      if (fetchUser) {
-        fetchUser(); // Call only if fetchUser is defined
-      } else {
-        console.warn("fetchUser is undefined");
-      }
+      navigate(longLink ? `/dashboard?createNew=${longLink}` : "/dashboard");
+      fetchUser();  //refresh the page
     }
   }, [data, error]);
 
@@ -169,11 +165,11 @@ export function LoginForm({
                 </div>
                 <div className="mt-4 text-center text-sm">
                   Don&apos;t have an account?{" "}
-                  <a href="#" className="">
+                  <NavLink to="/auth/signup" className="">
                     <span className="underline underline-offset-2 hover:text-primary">
                       Sign up
                     </span>
-                  </a>
+                  </NavLink>
                 </div>
               </form>
             </CardContent>

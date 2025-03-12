@@ -9,13 +9,13 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Loader2, Upload } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import * as yup from "yup";
 import Error from "./Error";
 import { useFetch } from "@/hooks/useFetch";
 import { signup, SignUpData } from "@/db/apiAuth";
-import { useNavigate, useSearchParams } from "react-router";
+import { NavLink, useNavigate, useSearchParams } from "react-router";
 
 export function SignupForm({
   className,
@@ -52,7 +52,7 @@ export function SignupForm({
   useEffect(() => {
     console.log(data);
     if (!error && data) {
-      navigate(`/dashboard?${longLink}` ? `createNew=${longLink}` : "");
+      navigate(longLink ? `/dashboard?createNew=${longLink}` : "/dashboard");
     }
   }, [data, error]);
 
@@ -154,37 +154,7 @@ export function SignupForm({
                     </div>
                   </div>
                   {/* profile picture */}
-                  <div className="grid gap-2">
-                    <div className="flex items-center">
-                      <Label htmlFor="profile_pic">Profile Pic</Label>
-                    </div>
-                    <div className="space-y-1">
-                      <label
-                        htmlFor="profile_pic"
-                        className={cn(
-                          "flex flex-col items-center justify-center gap-2 rounded-md border border-input bg-background px-4 py-4 text-xs shadow-xs transition-colors hover:bg-accent hover:text-accent-foreground",
-                          "cursor-pointer" // Make it clickable
-                        )}
-                      >
-                        {/* File Upload Icon from Lucide */}
-                        <Upload className="h-4 w-4" />
-                        <span className="text-xs font-medium">
-                          Upload Profile Picture
-                        </span>
 
-                        <Input
-                          id="profile_pic"
-                          name="profile_pic"
-                          type="file"
-                          className="hidden" // Hide the default file input
-                          onChange={handleInputChange}
-                        />
-                      </label>
-                      {errors.profile_pic && (
-                        <Error message={errors.profile_pic} />
-                      )}
-                    </div>
-                  </div>
                   <Button
                     type="button"
                     className="w-full"
@@ -203,11 +173,11 @@ export function SignupForm({
                 </div>
                 <div className="mt-4 text-center text-sm">
                   Already have an account?{" "}
-                  <a href="#" className="">
+                  <NavLink to="/auth/login" className="">
                     <span className="underline underline-offset-2 hover:text-primary">
                       Login
                     </span>
-                  </a>
+                  </NavLink>
                 </div>
               </form>
             </CardContent>
