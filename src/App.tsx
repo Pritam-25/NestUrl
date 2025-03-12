@@ -8,6 +8,7 @@ import Links from "./pages/LinksPage";
 import Auth from "./pages/Auth";
 import { ThemeProvider } from "@/components/theme-provider";
 import { LoginForm } from "./components/login-form";
+import { SignupForm } from "./components/signup_form";
 
 function App() {
   return (
@@ -20,8 +21,9 @@ function App() {
           <Route path="/dashboard" element={<Dashboard />} />
         </Route>
 
-          <Route path="/auth" element={<Auth />} />
-          <Route path="/login" element={<LoginForm />} />
+        <Route path="/auth" element={<Auth />} />
+        <Route path="/login" element={<LoginForm />} />
+        <Route path="/signup" element={<SignupForm />} />
         {/* 404 Not Found */}
         <Route path="*" element={<NotFound />} />
       </Routes>

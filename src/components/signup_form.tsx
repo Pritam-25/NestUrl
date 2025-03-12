@@ -9,23 +9,24 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { FaGoogle } from "react-icons/fa";
-import { Loader2 } from "lucide-react";
+import { Loader2, Upload } from "lucide-react";
 import { useEffect, useState } from "react";
 import * as yup from "yup";
 import Error from "./Error";
 import { useFetch } from "@/hooks/useFetch";
-import { login, LoginData } from "@/db/apiAuth";
+import { signup, SignUpData } from "@/db/apiAuth";
 import { useNavigate, useSearchParams } from "react-router";
 
-export function LoginForm({
+export function SignupForm({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<"div">) {
   //* input values state -->
-  const [formData, setFormData] = useState<LoginData>({
+  const [signUpFormData, setSignUpFormData] = useState<SignUpData>({
+    name: "",
     email: "",
     password: "",
+    profile_pic: null,
   });
 
   const navigate = useNavigate();
@@ -34,17 +35,17 @@ export function LoginForm({
 
   //* handle the input value state change -->
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
+    const { name, value, files } = e.target;
+    setSignUpFormData((prev) => ({
       ...prev,
-      [name]: value,
+      [name]: files ? files[0] : value,
     }));
   };
 
   //* Validation errors state
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const { data, error, loading, fn: loginUser } = useFetch(login);
+  const { data, error, loading, fn: signUpUser } = useFetch(signup);
 
   //* after login navigate back to dashboard
   // if longlink present then createnew=longlink either simpy ""
@@ -56,11 +57,12 @@ export function LoginForm({
   }, [data, error]);
 
   //* handle login functionality -->
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrors({});
     try {
       const formSchema = yup.object().shape({
+        name: yup.string().required("Name is required"),
         email: yup
           .string()
           .email("Invalid Email")
@@ -71,11 +73,11 @@ export function LoginForm({
           .required("Password is Required"),
       });
 
-      await formSchema.validate(formData, { abortEarly: false });
-      console.log(`formData: ${formData}`);
+      await formSchema.validate(signUpFormData, { abortEarly: false });
+      console.log(`signUpFormData: ${signUpFormData}`);
 
-      //* login functionality -->
-      await loginUser(formData);
+      //* signup functionality -->
+      await signUpUser(signUpFormData);
     } catch (error) {
       const newErrors: Record<string, string> = {};
       if (error instanceof yup.ValidationError) {
@@ -93,10 +95,10 @@ export function LoginForm({
         <div className={cn("flex flex-col gap-6", className)} {...props}>
           <Card>
             <CardHeader>
-              <CardTitle className="text-2xl">Login</CardTitle>
+              <CardTitle className="text-2xl">Sign Up</CardTitle>
               <div className="space-y-1">
                 <CardDescription>
-                  Enter your email below to login to your account
+                  Create a new account if you have&rsquo;t already
                 </CardDescription>
                 {error && <Error message={error.message} />}
               </div>
@@ -104,6 +106,22 @@ export function LoginForm({
             <CardContent>
               <form>
                 <div className="flex flex-col gap-6">
+                  {/* name */}
+                  <div className="grid gap-2">
+                    <Label htmlFor="email">Name</Label>
+                    <div className="space-y-1">
+                      <Input
+                        id="name"
+                        type="name"
+                        name="name"
+                        placeholder="Enter your name"
+                        required
+                        onChange={handleInputChange}
+                      />
+                      {errors.email && <Error message={errors.email} />}
+                    </div>
+                  </div>
+                  {/* email */}
                   <div className="grid gap-2">
                     <Label htmlFor="email">Email</Label>
                     <div className="space-y-1">
@@ -118,15 +136,10 @@ export function LoginForm({
                       {errors.email && <Error message={errors.email} />}
                     </div>
                   </div>
+                  {/* password */}
                   <div className="grid gap-2">
                     <div className="flex items-center">
                       <Label htmlFor="password">Password</Label>
-                      <a
-                        href="#"
-                        className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
-                      >
-                        Forgot your password?
-                      </a>
                     </div>
                     <div className="space-y-1">
                       <Input
@@ -140,31 +153,59 @@ export function LoginForm({
                       {errors.password && <Error message={errors.password} />}
                     </div>
                   </div>
+                  {/* profile picture */}
+                  <div className="grid gap-2">
+                    <div className="flex items-center">
+                      <Label htmlFor="profile_pic">Profile Pic</Label>
+                    </div>
+                    <div className="space-y-1">
+                      <label
+                        htmlFor="profile_pic"
+                        className={cn(
+                          "flex flex-col items-center justify-center gap-2 rounded-md border border-input bg-background px-4 py-4 text-xs shadow-xs transition-colors hover:bg-accent hover:text-accent-foreground",
+                          "cursor-pointer" // Make it clickable
+                        )}
+                      >
+                        {/* File Upload Icon from Lucide */}
+                        <Upload className="h-4 w-4" />
+                        <span className="text-xs font-medium">
+                          Upload Profile Picture
+                        </span>
+
+                        <Input
+                          id="profile_pic"
+                          name="profile_pic"
+                          type="file"
+                          className="hidden" // Hide the default file input
+                          onChange={handleInputChange}
+                        />
+                      </label>
+                      {errors.profile_pic && (
+                        <Error message={errors.profile_pic} />
+                      )}
+                    </div>
+                  </div>
                   <Button
                     type="button"
                     className="w-full"
                     disabled={loading}
-                    onClick={handleLogin}
+                    onClick={handleSignUp}
                   >
                     {loading ? (
                       <>
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />{" "}
-                        Logging in...
+                        Signing in...
                       </>
                     ) : (
-                      "Login"
+                      "Sign Up"
                     )}
-                  </Button>
-                  <Button variant="outline" className="w-full h-10 flex gap-4">
-                    <FaGoogle />
-                    <span>Login with Google</span>
                   </Button>
                 </div>
                 <div className="mt-4 text-center text-sm">
-                  Don&apos;t have an account?{" "}
+                  Already have an account?{" "}
                   <a href="#" className="">
                     <span className="underline underline-offset-2 hover:text-primary">
-                      Sign up
+                      Login
                     </span>
                   </a>
                 </div>
