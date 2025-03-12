@@ -1,8 +1,11 @@
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
-import { Outlet } from "react-router";
+import { Outlet, useLocation } from "react-router";
 
 const Layout = () => {
+  const location = useLocation();
+  const hideFooter = location.pathname.startsWith("/auth");
+
   return (
     <div className="w-full container mx-auto">
       <Navbar />
@@ -10,7 +13,8 @@ const Layout = () => {
       <div className="pt-18 px-4">
         <Outlet />
       </div>
-      <Footer />
+      {/* Conditionally render Footer */}
+      {!hideFooter && <Footer />}
     </div>
   );
 };

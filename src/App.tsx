@@ -10,7 +10,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { LoginForm } from "./components/login-form";
 import { SignupForm } from "./components/signup_form";
 import { UrlProvider } from "./context";
-import Require_Auth from "./components/require_auth";
+import Require_Auth from "./components/Require_Auth";
 
 function App() {
   return (
@@ -18,24 +18,32 @@ function App() {
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
         <Routes>
           {/* Public Routes */}
-          <Route path="/auth" element={<Auth />}>
-            <Route index element={<LoginForm />} />
-            <Route path="login" element={<LoginForm />} />
-            <Route path="signup" element={<SignupForm />} />
-          </Route>
 
           {/* Protected Routes inside Layout */}
-          <Route
-            path="/"
-            element={
-              <Require_Auth>
-                <Layout />
-              </Require_Auth>
-            }
-          >
+          <Route path="/" element={<Layout />}>
             <Route index element={<LandingPage />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/links/:id" element={<Links />} />
+            <Route
+              path="/dashboard"
+              element={
+                <Require_Auth>
+                  <Dashboard />
+                </Require_Auth>
+              }
+            />
+            <Route
+              path="/links/:id"
+              element={
+                <Require_Auth>
+                  <Links />
+                </Require_Auth>
+              }
+            />
+
+            <Route path="/auth" element={<Auth />}>
+              <Route index element={<LoginForm />} />
+              <Route path="login" element={<LoginForm />} />
+              <Route path="signup" element={<SignupForm />} />
+            </Route>
           </Route>
 
           {/* 404 Not Found */}
