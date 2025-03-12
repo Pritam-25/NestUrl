@@ -17,6 +17,7 @@ import Error from "./Error";
 import { useFetch } from "@/hooks/useFetch";
 import { login, LoginData } from "@/db/apiAuth";
 import { useNavigate, useSearchParams } from "react-router";
+import { useUrlState } from "@/context";
 
 export function LoginForm({
   className,
@@ -45,6 +46,7 @@ export function LoginForm({
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const { data, error, loading, fn: loginUser } = useFetch(login);
+  const fetchUser = useUrlState();
 
   //* after login navigate back to dashboard
   // if longlink present then createnew=longlink either simpy ""
@@ -52,6 +54,11 @@ export function LoginForm({
     console.log(data);
     if (!error && data) {
       navigate(`/dashboard?${longLink}` ? `createNew=${longLink}` : "");
+      if (fetchUser) {
+        fetchUser(); // Call only if fetchUser is defined
+      } else {
+        console.warn("fetchUser is undefined");
+      }
     }
   }, [data, error]);
 
